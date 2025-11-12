@@ -1,11 +1,12 @@
 const router = require("express").Router();
 const cheerio = require("cheerio");
-const axios = require("axios").default
+const axios = require("axios").default;
 const AxiosService = require("../helpers/axiosService");
+const logError = require("../helpers/errorLogger");
 
 router.get("/", (req, res) => {
   res.send({
-    message: "chapter"
+    message: "chapter",
   });
 });
 
@@ -20,13 +21,13 @@ router.get("/:slug", async (req, res) => {
     let chapter_image = [];
     const obj = {};
     obj.chapter_endpoint = slug + "/";
-    obj.chapter_name = slug.split('-').join(' ').trim()
+    obj.chapter_name = slug.split("-").join(" ").trim();
 
-    obj.title = $('#Judul > header > p > a > b').text().trim()
+    obj.title = $("#Judul > header > p > a > b").text().trim();
     /**
      * @Komiku
      */
-    const getTitlePages = content.find(".dsk2")
+    const getTitlePages = content.find(".dsk2");
     getTitlePages.filter(() => {
       obj.title = $(getTitlePages).find("h1").text().replace("Komik ", "");
     });
@@ -34,25 +35,26 @@ router.get("/:slug", async (req, res) => {
     /**
      * @Komiku
      */
-    const getPages = $('#Baca_Komik > img')
+    const getPages = $("#Baca_Komik > img");
 
     // const getPages = $('#chimg > img')
     obj.chapter_pages = getPages.length;
     getPages.each((i, el) => {
       chapter_image.push({
-        chapter_image_link: $(el).attr("src").replace('i0.wp.com/',''),
+        chapter_image_link: $(el).attr("src").replace("i0.wp.com/", ""),
         image_number: i + 1,
       });
     });
     obj.chapter_image = chapter_image;
     res.json(obj);
   } catch (error) {
-    console.log(error);
-    res.send({
+    const errorResponse = {
       status: false,
       message: error,
-      chapter_image :[]
-    });
+      chapter_image: [],
+    };
+    logError(error, req, errorResponse);
+    res.send(errorResponse);
   }
 });
 

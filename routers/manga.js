@@ -1,7 +1,8 @@
 const router = require("express").Router();
 const cheerio = require("cheerio");
-const {baseUrl, baseApi} = require("../constants/urls");
+const { baseUrl, baseApi } = require("../constants/urls");
 const replaceMangaPage = "https://komiku.org/manga/";
+const logError = require("../helpers/errorLogger");
 const AxiosService = require("../helpers/axiosService");
 
 // manga popular ----Ignore this for now --------
@@ -14,10 +15,7 @@ router.get("/manga/popular", async (req, res) => {
 //mangalist pagination  -------Done------
 router.get("/manga/page/:pagenumber", async (req, res) => {
   let pagenumber = req.params.pagenumber;
-  let path =
-    pagenumber === "1"
-      ? "/manga/"
-      : `/manga/page/${pagenumber}/`;
+  let path = pagenumber === "1" ? "/manga/" : `/manga/page/${pagenumber}/`;
   let url = baseApi + path;
 
   try {
@@ -27,7 +25,6 @@ router.get("/manga/page/:pagenumber", async (req, res) => {
       const element = $(".bge");
       let manga_list = [];
       let title, type, updated_on, endpoint, thumb, chapter;
-
 
       element.each((idx, el) => {
         console.log(1);
@@ -47,7 +44,6 @@ router.get("/manga/page/:pagenumber", async (req, res) => {
           endpoint,
           chapter,
         });
-
       });
       return res.status(200).json({
         status: true,
@@ -60,12 +56,13 @@ router.get("/manga/page/:pagenumber", async (req, res) => {
       manga_list: [],
     });
   } catch (err) {
-    console.log(err);
-    res.send({
+    const errorResponse = {
       status: false,
       message: err,
       manga_list: [],
-    });
+    };
+    logError(err, req, errorResponse);
+    res.send(errorResponse);
   }
 });
 
@@ -85,7 +82,9 @@ router.get("/manga/detail/:slug", async (req, res) => {
     const getMeta = element.find(".inftable > tbody").first();
     obj.title = $("#Judul > h1").text().trim();
     obj.type = $("tr:nth-child(2) > td:nth-child(2)").find("b").text();
-    obj.author = $("#Informasi > table > tbody > tr:nth-child(4) > td:nth-child(2)")
+    obj.author = $(
+      "#Informasi > table > tbody > tr:nth-child(4) > td:nth-child(2)"
+    )
       .text()
       .trim();
     obj.status = $(getMeta).children().eq(4).find("td:nth-child(2)").text();
@@ -127,18 +126,19 @@ router.get("/manga/detail/:slug", async (req, res) => {
 
     res.status(200).send(obj);
   } catch (error) {
-    console.log(error);
-    res.send({
+    const errorResponse = {
       status: false,
       message: error,
-    });
+    };
+    logError(error, req, errorResponse);
+    res.send(errorResponse);
   }
 });
 
 //serach manga ------Done-----------
 router.get("/search/", async (req, res) => {
   const query = req.query.q;
-  const url =  baseApi + `?post_type=manga&s=${query}`;
+  const url = baseApi + `?post_type=manga&s=${query}`;
 
   try {
     const response = await AxiosService(url);
@@ -170,10 +170,12 @@ router.get("/search/", async (req, res) => {
       manga_list,
     });
   } catch (error) {
-    res.send({
+    const errorResponse = {
       status: false,
       message: error.message,
-    });
+    };
+    logError(error, req, errorResponse);
+    res.send(errorResponse);
   }
 });
 
@@ -189,11 +191,7 @@ router.get("/genres", async (req, res) => {
       .find("option")
       .each((idx, el) => {
         if ($(el).text() !== "Genre 1") {
-          const endpoint = $(el)
-            .text()
-            .trim()
-            .split(" ")[0]
-            .toLowerCase();
+          const endpoint = $(el).text().trim().split(" ")[0].toLowerCase();
           list_genre.push({
             genre_name: $(el).text().trim(),
             endpoint,
@@ -205,10 +203,12 @@ router.get("/genres", async (req, res) => {
     obj.list_genre = list_genre;
     res.json(obj);
   } catch (error) {
-    res.send({
+    const errorResponse = {
       status: false,
       message: error,
-    });
+    };
+    logError(error, req, errorResponse);
+    res.send(errorResponse);
   }
 });
 
@@ -246,11 +246,13 @@ router.get("/genres/:slug/:pagenumber", async (req, res) => {
       manga_list,
     });
   } catch (error) {
-    res.send({
+    const errorResponse = {
       status: false,
       message: error,
       manga_list: [],
-    });
+    };
+    logError(error, req, errorResponse);
+    res.send(errorResponse);
   }
 });
 
@@ -279,14 +281,18 @@ router.get("/manga/popular/:pagenumber", async (req, res) => {
       type = $(el).find("div.bgei > a > div.tpe1_inf > b").text();
       thumb = $(el).find("div.bgei > a > img").attr("src");
       sortDesc = $(el).find("div.kan > p").text().trim();
-      upload_on = $(el).find("div.kan > span.judul2").text().split("•")[1].trim();
+      upload_on = $(el)
+        .find("div.kan > span.judul2")
+        .text()
+        .split("•")[1]
+        .trim();
       manga_list.push({
         title,
         type,
         thumb,
         endpoint,
         upload_on,
-        sortDesc
+        sortDesc,
       });
     });
     res.json({
@@ -295,11 +301,13 @@ router.get("/manga/popular/:pagenumber", async (req, res) => {
       manga_list,
     });
   } catch (error) {
-    res.send({
+    const errorResponse = {
       status: false,
       message: error,
       manga_list: [],
-    });
+    };
+    logError(error, req, errorResponse);
+    res.send(errorResponse);
   }
 });
 
@@ -307,9 +315,7 @@ router.get("/manga/popular/:pagenumber", async (req, res) => {
 router.get("/recommended/:pagenumber", async (req, res) => {
   const pagenumber = req.params.pagenumber;
   const path =
-    pagenumber === "1"
-      ? `/other/hot/`
-      : `/other/hot/page/${pagenumber}/`;
+    pagenumber === "1" ? `/other/hot/` : `/other/hot/page/${pagenumber}/`;
   const url = baseApi + path;
   try {
     const response = await AxiosService(url);
@@ -341,9 +347,11 @@ router.get("/recommended/:pagenumber", async (req, res) => {
       manga_list,
     });
   } catch (error) {
-    res.send({
+    const errorResponse = {
       message: error.message,
-    });
+    };
+    logError(error, req, errorResponse);
+    res.send(errorResponse);
   }
 });
 
@@ -397,12 +405,13 @@ const getManhuaManhwa = async (req, res, type) => {
       manga_list,
     });
   } catch (error) {
-    console.log(error);
-    res.send({
+    const errorResponse = {
       status: false,
       message: error,
       manga_list: [],
-    });
+    };
+    logError(error, req, errorResponse);
+    res.send(errorResponse);
   }
 };
 

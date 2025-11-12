@@ -26,10 +26,10 @@ jobs:
         npm run build --if-present
         npm run test --if-present
 
-    - name: 'Deploy to Azure Web App'
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'mangamint'
-        slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_fe69b0e381904baa834812e3c372eaf0 }}
-        package: .
+    #- name: 'Deploy to Azure Web App'
+    #  uses: azure/webapps-deploy@v2
+    #  with:
+    #    app-name: 'mangamint'
+    #    slot-name: 'production'
+    #    publish-profile: ${{ secrets.AzureAppService_PublishProfile_fe69b0e381904baa834812e3c372eaf0 }}
+    #    package: .
