@@ -14,12 +14,15 @@ router.get("/manga/popular", async (req, res) => {
 
 //mangalist pagination  -------Done------
 router.get("/manga/page/:pagenumber", async (req, res) => {
+  //console.log(
+  //  `[DEBUG] Reached /manga/page/:pagenumber handler with pagenumber: ${req.params.pagenumber}`
+  //);
   let pagenumber = req.params.pagenumber;
   let path = pagenumber === "1" ? "/manga/" : `/manga/page/${pagenumber}/`;
   let url = baseApi + path;
 
   try {
-    const response = await AxiosService(url);
+    const response = await AxiosService.get(url);
     if (response.status === 200) {
       const $ = cheerio.load(response.data);
       const element = $(".bge");
@@ -71,7 +74,7 @@ router.get("/manga/detail/:slug", async (req, res) => {
   const slug = req.params.slug;
 
   try {
-    const response = await AxiosService(`/manga/${slug}`);
+    const response = await AxiosService.get(`/manga/${slug}`);
     const $ = cheerio.load(response.data);
     const element = $(".perapih");
     let genre_list = [];
@@ -136,12 +139,17 @@ router.get("/manga/detail/:slug", async (req, res) => {
 });
 
 //serach manga ------Done-----------
-router.get("/search/", async (req, res) => {
+router.get("/search", async (req, res) => {
+  //console.log(
+  //  `[DEBUG] Reached /search handler with request query: ${JSON.stringify(
+  //    req.query
+  //  )}`
+  //);
   const query = req.query.q;
   const url = baseApi + `?post_type=manga&s=${query}`;
-
+  //console.log(`[DEBUG] sent URL: ${url}`);
   try {
-    const response = await AxiosService(url);
+    const response = await AxiosService.get(url);
     const $ = cheerio.load(response.data);
     const element = $(".bge");
     let manga_list = [];
@@ -182,7 +190,7 @@ router.get("/search/", async (req, res) => {
 //genreList  -----Done-----
 router.get("/genres", async (req, res) => {
   try {
-    const response = await AxiosService();
+    const response = await AxiosService.get();
 
     const $ = cheerio.load(response.data);
     let list_genre = [];
@@ -223,7 +231,7 @@ router.get("/genres/:slug/:pagenumber", async (req, res) => {
   const url = baseApi + path;
 
   try {
-    const response = await AxiosService(url);
+    const response = await AxiosService.get(url);
     const $ = cheerio.load(response.data);
     const element = $(".bge");
     var thumb, title, endpoint, type;
@@ -266,7 +274,7 @@ router.get("/manga/popular/:pagenumber", async (req, res) => {
   const url = baseApi + path;
 
   try {
-    const response = await AxiosService(url);
+    const response = await AxiosService.get(url);
     const $ = cheerio.load(response.data);
     const element = $(".bge");
     let thumb, title, endpoint, type, upload_on, sortDesc;
@@ -318,7 +326,7 @@ router.get("/recommended/:pagenumber", async (req, res) => {
     pagenumber === "1" ? `/other/hot/` : `/other/hot/page/${pagenumber}/`;
   const url = baseApi + path;
   try {
-    const response = await AxiosService(url);
+    const response = await AxiosService.get(url);
 
     const $ = cheerio.load(response.data);
     const element = $(".bge");
@@ -374,7 +382,7 @@ const getManhuaManhwa = async (req, res, type) => {
   const url = baseApi + path;
   try {
     console.log(url);
-    const response = await AxiosService(url);
+    const response = await AxiosService.get(url);
     const $ = cheerio.load(response.data);
     const element = $(".bge");
     var manga_list = [];

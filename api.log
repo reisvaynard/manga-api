@@ -1,0 +1,10 @@
+{"timestamp":"2025-11-19T02:55:00.453Z","level":"info","message":"Outgoing API Request","method":"get","url":"https://api.komiku.org/manga/page/:1/"}
+{"timestamp":"2025-11-19T02:55:00.623Z","level":"error","message":"Received API Response Error","status":"No response"}
+{"timestamp":"2025-11-19T04:12:54.228Z","level":"info","message":"Outgoing API Request","method":"get","url":"https://api.komiku.org?post_type=manga&s=undefined"}
+{"timestamp":"2025-11-19T04:12:54.380Z","level":"error","message":"Received API Response Error","status":"No response"}
+{"timestamp":"2025-11-19T04:13:02.111Z","level":"info","message":"Outgoing API Request","method":"get","url":"https://api.komiku.org?post_type=manga&s=undefined"}
+{"timestamp":"2025-11-19T04:13:02.144Z","level":"error","message":"Received API Response Error","status":"No response"}
+{"timestamp":"2025-11-19T04:13:24.583Z","level":"info","message":"Outgoing API Request","method":"get","url":"https://api.komiku.org?post_type=manga&s=naruto"}
+{"timestamp":"2025-11-19T04:13:24.634Z","level":"error","message":"Received API Response Error","status":"No response"}
+{"timestamp":"2025-11-19T04:15:30.783Z","level":"info","message":"Outgoing API Request","method":"get","url":"https://api.komiku.org?post_type=manga&s=naruto"}
+{"timestamp":"2025-11-19T04:15:31.082Z","level":"error","message":"Received API Response Error","status":"No response"}
