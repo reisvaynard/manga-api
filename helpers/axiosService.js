@@ -38,14 +38,19 @@ instance.interceptors.response.use(
       level: "info",
       message: "Received API Response",
       status: response.status,
+      statusText: response.statusText,
+      body: response.data,
     });
     return response;
   },
   (error) => {
     logToApi({
       level: "error",
-      message: "Received API Response Error",
+      message: "Received API Response Error", // General message
+      errorMessage: error.message, // Specific error from Axios (e.g., "timeout", "Network Error")
       status: error.response ? error.response.status : "No response",
+      statusText: error.response ? error.response.statusText : "N/A",
+      body: error.response ? error.response.data : "N/A",
     });
     return Promise.reject(error);
   }
